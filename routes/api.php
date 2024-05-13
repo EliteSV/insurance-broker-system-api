@@ -4,6 +4,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AseguradorasController;
+use App\Http\Controllers\ClienteController; 
+use App\Http\Controllers\PolizaController; 
 
 Route::get('/', function () {
     return response()->json(['message' => 'Hello World!']);
@@ -18,3 +20,7 @@ Route::post('/login', [AuthController::class, 'login']);
 Route::post('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
 
 Route::resource('aseguradoras', AseguradorasController::class)->middleware('auth:sanctum');
+
+Route::resource('clientes', ClienteController::class)->middleware('auth:sanctum');
+
+Route::resource('polizas', PolizaController::class)->middleware('auth:sanctum');
