@@ -25,4 +25,9 @@ class Poliza extends Model
     {
         return $this->belongsTo(TipoPoliza::class, 'tipo_poliza_id');
     }
+
+    public function vigencias()
+    {
+        return $this->hasMany(VigenciaPolizas::class, 'poliza_id');
+    }
 }

@@ -23,10 +23,10 @@ class AseguradorasController extends Controller
         $request->validate([
             'nombre' => 'required',
             'direccion' => 'required',
+            'email' => 'required',
             'telefono' => 'required',
         ]);
         return Aseguradora::create($request->all());
-
     }
 
     /**
@@ -45,6 +45,7 @@ class AseguradorasController extends Controller
         $request->validate([
             'nombre' => 'required',
             'direccion' => 'required',
+            'email' => 'required',
             'telefono' => 'required',
         ]);
         return Aseguradora::findOrFail($id)->update($request->all());

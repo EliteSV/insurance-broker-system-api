@@ -21,7 +21,7 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        return Cliente::all();
+        return Cliente::with("documentos")->get();
     }
 
     /**
@@ -35,6 +35,7 @@ class ClienteController extends Controller
                 'dui' => 'required|max:255|unique:clientes,dui',
                 'nit' => 'required|max:255|unique:clientes,nit',
                 'email' => 'required|email|max:255|unique:clientes,email',
+                'direccion' => 'required|max:255',
                 'telefono' => 'required|max:255',
                 'documentos_polizas.*.tipo_documento_id' => 'required_with:documentos_polizas.*.file|exists:tipos_documentos,id',
             ]);
@@ -63,7 +64,7 @@ class ClienteController extends Controller
      */
     public function show(string $id)
     {
-        return Cliente::findOrFail($id);
+        return Cliente::with('documentos')->findOrFail($id);
     }
 
     /**
@@ -80,6 +81,7 @@ class ClienteController extends Controller
                 'nit' => 'required|max:255',
                 'email' => 'required|email|max:255',
                 'telefono' => 'required|max:255',
+                'direccion' => 'required|max:255',
                 'documentos_polizas.*.tipo_documento_id' => 'required_with:documentos_polizas.*.file|exists:tipos_documentos,id',
             ]);
 
