@@ -114,7 +114,7 @@ class ClienteController extends Controller
     {
         foreach ($documentos as $doc) {
             if (isset($doc['file']) && $doc['file']->isValid()) {
-                $path = "Cliente/{$cliente->id}/files";
+                $path = "Cliente/{$cliente->id}";
                 try {
                     $url = $this->fileService->uploadFile($doc['file'], $path);
                     $cliente->documentos()->create([
