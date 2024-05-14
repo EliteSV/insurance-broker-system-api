@@ -9,7 +9,5 @@ class Aseguradora extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'direccion', 'telefono'];
-
-    
+    protected $fillable = ['nombre', 'direccion', 'telefono', 'email'];
 }

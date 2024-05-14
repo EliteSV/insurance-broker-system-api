@@ -9,11 +9,10 @@ class Cliente extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'dui', 'nit', 'email', 'telefono'];
+    protected $fillable = ['nombre', 'dui', 'nit', 'email', 'telefono', 'direccion'];
 
     public function documentos()
     {
         return $this->hasMany(DocumentosClientes::class, 'cliente_id');
     }
 }
-

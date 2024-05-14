@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Poliza;
+use Illuminate\Support\Facades\Log;
 
 class PolizaController extends Controller
 {
@@ -12,7 +13,7 @@ class PolizaController extends Controller
      */
     public function index()
     {
-        return Poliza::with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
+        return Poliza::with(['cliente', 'aseguradora', 'tipoPoliza', 'vigencias'])->get();
     }
 
     /**
@@ -20,21 +21,34 @@ class PolizaController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required|max:255',
-            'estado' => 'required|max:255',
-            'monto' => 'required|numeric',
-            'cuotas' => 'required|integer',
-            'detalles' => 'required|array',
-            'cliente_id' => 'required|exists:clientes,id',
-            'aseguradora_id' => 'required|exists:aseguradoras,id',
-            'tipo_poliza_id' => 'required|exists:tipo_polizas,id'
-        ]);
+        try {
+            $request->validate([
+                'nombre' => 'required|max:255',
+                'estado' => 'required|max:255',
+                'monto' => 'required|numeric',
+                'cuotas' => 'required|integer',
+                'detalles' => 'required|array',
+                'fecha_inicio' => 'required|max:255',
+                'fecha_vencimiento' => 'required|max:255',
+                'cliente_id' => 'required|exists:clientes,id',
+                'aseguradora_id' => 'required|exists:aseguradoras,id',
+                'tipo_poliza_id' => 'required|exists:tipo_polizas,id'
+            ]);
 
-        $polizaData = $request->all();
-        $polizaData['detalles'] = json_encode($request->detalles);
+            $polizaData = $request->all();
+            $polizaData['detalles'] = json_encode($request->detalles);
 
-        return Poliza::create($polizaData);
+            $poliza = Poliza::create($polizaData);
+
+            $poliza->vigencias()->create([
+                'fecha_inicio' => $request->fecha_inicio,
+                'fecha_vencimiento' => $request->fecha_vencimiento,
+            ]);
+            return response()->json($poliza);
+        } catch (\Exception $e) {
+            Log::error('Failed to create poliza: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
     }
 
     /**
@@ -42,7 +56,7 @@ class PolizaController extends Controller
      */
     public function show(string $id)
     {
-        $poliza = Poliza::with(['cliente', 'aseguradora', 'tipoPoliza'])->findOrFail($id);
+        $poliza = Poliza::with(['cliente', 'aseguradora', 'tipoPoliza', 'vigencias'])->findOrFail($id);
         return $poliza;
     }
 
