@@ -4,9 +4,18 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Cliente;
+use App\Services\FileService;
+use Illuminate\Support\Facades\Log;
 
 class ClienteController extends Controller
 {
+    protected $fileService;
+
+    public function __construct(FileService $fileService)
+    {
+        $this->fileService = $fileService;
+    }
+
     /**
      * Display a listing of the resource.
      */
@@ -20,16 +29,34 @@ class ClienteController extends Controller
      */
     public function store(Request $request)
     {
-        $request->validate([
-            'nombre' => 'required|max:255',
-            'dui' => 'required|max:255|unique:clientes,dui',
-            'nit' => 'required|max:255|unique:clientes,nit',
-            'email' => 'required|email|max:255|unique:clientes,email',
-            'telefono' => 'required|max:255'
-        ]);
+        try {
+            $request->validate([
+                'nombre' => 'required|max:255',
+                'dui' => 'required|max:255|unique:clientes,dui',
+                'nit' => 'required|max:255|unique:clientes,nit',
+                'email' => 'required|email|max:255|unique:clientes,email',
+                'telefono' => 'required|max:255',
+                'documentos_polizas.*.tipo_documento_id' => 'required_with:documentos_polizas.*.file|exists:tipos_documentos,id',
+            ]);
 
-        return Cliente::create($request->all());
+            $cliente = Cliente::create($request->all());
+            $documentos = [];
+
+            if ($request->has('documentos_polizas')) {
+                foreach ($request->documentos_polizas as $index => $doc) {
+                    $doc['file'] = $request->file("documentos_polizas.$index.file");
+                    $documentos[] = $doc;
+                }
+                $this->handleDocumentUploads($cliente, $documentos);
+            }
+
+            return response()->json($cliente);
+        } catch (\Exception $e) {
+            Log::error('Failed to store Cliente: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
     }
+
 
     /**
      * Display the specified resource.
@@ -42,26 +69,65 @@ class ClienteController extends Controller
     /**
      * Update the specified resource in storage.
      */
-    public function update(Request $request, string $id)
+    public function update(Request $request, $id)
     {
-        $request->validate([
-            'nombre' => 'required|max:255',
-            'dui' => 'required|max:255',
-            'nit' => 'required|max:255',
-            'email' => 'required|email|max:255',
-            'telefono' => 'required|max:255'
-        ]);
+        try {
+            $cliente = Cliente::findOrFail($id);
 
-        $cliente = Cliente::findOrFail($id); 
-        $cliente->update($request->all()); 
-        return $cliente;
+            $request->validate([
+                'nombre' => 'required|max:255',
+                'dui' => 'required|max:255',
+                'nit' => 'required|max:255',
+                'email' => 'required|email|max:255',
+                'telefono' => 'required|max:255',
+                'documentos_polizas.*.tipo_documento_id' => 'required_with:documentos_polizas.*.file|exists:tipos_documentos,id',
+            ]);
+
+            $cliente->update($request->all());
+            $documentos = [];
+
+            if ($request->has('documentos_polizas')) {
+                foreach ($request->documentos_polizas as $index => $doc) {
+                    $doc['file'] = $request->file("documentos_polizas.$index.file");
+                    $documentos[] = $doc;
+                }
+                $this->handleDocumentUploads($cliente, $documentos);
+            }
+
+            return response()->json($cliente);
+        } catch (\Exception $e) {
+            Log::error('Failed to update Cliente: ' . $e->getMessage());
+            return response()->json(['error' => $e->getMessage()], 422);
+        }
     }
+
 
     /**
      * Remove the specified resource from storage.
      */
     public function destroy(string $id)
     {
-        return Cliente::destroy($id); 
+        return Cliente::destroy($id);
+    }
+
+    private function handleDocumentUploads($cliente, $documentos)
+    {
+        foreach ($documentos as $doc) {
+            if (isset($doc['file']) && $doc['file']->isValid()) {
+                $path = "Cliente/{$cliente->id}/files";
+                try {
+                    $url = $this->fileService->uploadFile($doc['file'], $path);
+                    $cliente->documentos()->create([
+                        'url' => $url,
+                        'tipo_documento_id' => $doc['tipo_documento_id'],
+                    ]);
+                    Log::info("Document created: URL {$url}");
+                } catch (\Exception $e) {
+                    Log::error("Failed to upload file or create document: " . $e->getMessage());
+                }
+            } else {
+                Log::error("Invalid or no file provided for tipo_documento_id: {$doc['tipo_documento_id']}");
+            }
+        }
     }
 }
