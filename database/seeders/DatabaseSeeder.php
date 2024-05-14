@@ -17,6 +17,7 @@ class DatabaseSeeder extends Seeder
             RolesSeeder::class,
             UsuarioSeeder::class,
             TipoPolizaSeeder::class,
+            TiposDocumentoSeeder::class,
         ]);
     }
 }
