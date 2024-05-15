@@ -3,11 +3,10 @@
 namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Relations\HasOne;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Laravel\Sanctum\HasApiTokens;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-
 
 class Usuario extends Authenticatable
 {
@@ -17,6 +16,7 @@ class Usuario extends Authenticatable
         'nombre',
         'email',
         'password',
+        'rol_id',
     ];
 
     protected $hidden = [
@@ -30,7 +30,8 @@ class Usuario extends Authenticatable
         ];
     }
 
-    public function rol(): HasOne {
-        return $this->hasOne(Rol::class);
+    public function rol(): BelongsTo
+    {
+        return $this->belongsTo(Rol::class);
     }
 }
