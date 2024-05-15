@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AseguradorasController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PolizaController;
 use App\Http\Controllers\RenovacionController;
 use App\Http\Controllers\PagosController;
@@ -32,6 +33,8 @@ Route::resource('polizas', PolizaController::class)->middleware('auth:sanctum');
 Route::resource('renovacion', RenovacionController::class)->middleware('auth:sanctum');
 
 Route::resource('pagos', PagosController::class)->middleware('auth:sanctum');
+
+Route::resource('dashboard', DashboardController::class)->middleware('auth:sanctum');
 
 Route::resource('polizas-vencimiento', PolizasVencimientoController::class)->middleware('auth:sanctum');
 
