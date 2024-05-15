@@ -8,6 +8,7 @@ use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\PolizaController;
 use App\Http\Controllers\RenovacionController;
 use App\Http\Controllers\PagosController;
+use App\Http\Controllers\UsuarioController;
 
 Route::get('/', function () {
     return response()->json(['message' => 'Hello World!']);
@@ -30,3 +31,5 @@ Route::resource('polizas', PolizaController::class)->middleware('auth:sanctum');
 Route::resource('renovacion', RenovacionController::class)->middleware('auth:sanctum');
 
 Route::resource('pagos', PagosController::class)->middleware('auth:sanctum');
+
+Route::resource('usuarios', UsuarioController::class)->middleware('auth:sanctum');
