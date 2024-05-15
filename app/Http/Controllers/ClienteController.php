@@ -37,15 +37,15 @@ class ClienteController extends Controller
                 'email' => 'required|email|max:255|unique:clientes,email',
                 'direccion' => 'required|max:255',
                 'telefono' => 'required|max:255',
-                'documentos_polizas.*.tipo_documento_id' => 'required_with:documentos_polizas.*.file|exists:tipos_documentos,id',
+                'documentos.*.tipo_documento_id' => 'required_with:documentos.*.file|exists:tipos_documentos,id',
             ]);
 
             $cliente = Cliente::create($request->all());
             $documentos = [];
 
-            if ($request->has('documentos_polizas')) {
-                foreach ($request->documentos_polizas as $index => $doc) {
-                    $doc['file'] = $request->file("documentos_polizas.$index.file");
+            if ($request->has('documentos')) {
+                foreach ($request->documentos as $index => $doc) {
+                    $doc['file'] = $request->file("documentos.$index.file");
                     $documentos[] = $doc;
                 }
                 $this->handleDocumentUploads($cliente, $documentos);
@@ -73,8 +73,7 @@ class ClienteController extends Controller
     public function update(Request $request, $id)
     {
         try {
-            $cliente = Cliente::findOrFail($id);
-
+            info($request->all());
             $request->validate([
                 'nombre' => 'required|max:255',
                 'dui' => 'required|max:255',
@@ -82,15 +81,17 @@ class ClienteController extends Controller
                 'email' => 'required|email|max:255',
                 'telefono' => 'required|max:255',
                 'direccion' => 'required|max:255',
-                'documentos_polizas.*.tipo_documento_id' => 'required_with:documentos_polizas.*.file|exists:tipos_documentos,id',
+                'documentos.*.tipo_documento_id' => 'required_with:documentos.*.file|exists:tipos_documentos,id',
             ]);
+
+            $cliente = Cliente::findOrFail($id);
 
             $cliente->update($request->all());
             $documentos = [];
 
-            if ($request->has('documentos_polizas')) {
-                foreach ($request->documentos_polizas as $index => $doc) {
-                    $doc['file'] = $request->file("documentos_polizas.$index.file");
+            if ($request->has('documentos')) {
+                foreach ($request->documentos as $index => $doc) {
+                    $doc['file'] = $request->file("documentos.$index.file");
                     $documentos[] = $doc;
                 }
                 $this->handleDocumentUploads($cliente, $documentos);
