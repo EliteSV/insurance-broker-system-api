@@ -3,33 +3,39 @@
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
+use App\Services\RoleAbilityService;
 use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
-    
-public function login(Request $request)
-{
-    $credentials = $request->validate([
-        'email' => ['required', 'email'],
-        'password' => ['required'],
-    ]);
+    protected $roleAbilityService;
 
-    if (!Auth::attempt($credentials)) {
-        return response()->json(['message' => 'Invalid credentials'], 401);
+    public function __construct(RoleAbilityService $roleAbilityService)
+    {
+        $this->roleAbilityService = $roleAbilityService;
     }
 
-    $user = $request->user();
-    $token = $user->createToken('auth_token')->plainTextToken;
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => ['required', 'email'],
+            'password' => ['required'],
+        ]);
 
-    return response()->json(['token' => $token]);
-}
+        if (!Auth::attempt($credentials)) {
+            return response()->json(['message' => 'Invalid credentials'], 401);
+        }
 
-public function logout(Request $request)
-{
-    $request->user()->currentAccessToken()->delete();
-    return response()->json(['message' => 'Logged out successfully'], 200);
-}
+        $user = Auth::user()->load('rol');
+        $abilities = $this->roleAbilityService->getAbilitiesForRole($user->rol->nombre);
+        $token = $user->createToken('auth_token', $abilities)->plainTextToken;
 
+        return response()->json(['token' => $token]);
+    }
+
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+        return response()->json(['message' => 'Logged out successfully'], 200);
+    }
 }
