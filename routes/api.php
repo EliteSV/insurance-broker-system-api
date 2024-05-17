@@ -4,6 +4,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AseguradorasController;
 use App\Http\Controllers\ClienteController;
+use App\Http\Controllers\ContabilidadController;
 use App\Http\Controllers\DashboardController;
 use App\Http\Controllers\PolizaController;
 use App\Http\Controllers\RenovacionController;
@@ -19,6 +20,7 @@ $abilities = [
     'dashboard' => getAbilitiesString('dashboard'),
     'polizas-vencimiento' => getAbilitiesString('polizas-vencimiento'),
     'pagos' => getAbilitiesString('pagos'),
+    'contabilidad' => getAbilitiesString('contabilidad'),
 ];
 
 Route::get('/', function () {
@@ -38,4 +40,5 @@ Route::middleware(['auth:sanctum'])->group(function () use ($abilities) {
     Route::resource('polizas-vencimiento', PolizasVencimientoController::class)->middleware(['auth:sanctum', "ability:{$abilities['polizas-vencimiento']}"]);
     Route::resource('dashboard', DashboardController::class)->middleware(['auth:sanctum', "ability:{$abilities['dashboard']}"]);
     Route::resource('usuarios', UsuarioController::class)->middleware(['auth:sanctum', "ability:{$abilities['usuarios']}"]);
+    Route::resource('contabilidad', ContabilidadController::class)->middleware(['auth:sanctum', "ability:{$abilities['contabilidad']}"]);
 });

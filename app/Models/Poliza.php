@@ -30,4 +30,9 @@ class Poliza extends Model
     {
         return $this->hasMany(VigenciaPolizas::class, 'poliza_id');
     }
+
+    public function calculateGanancia()
+    {
+        return round($this->monto * 0.10, 2);
+    }
 }
