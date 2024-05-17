@@ -46,5 +46,8 @@ return [
         'archivos' => [
             'destroy' => 'delete-archivos',
         ],
+        'roles' => [
+            'index' => 'view-roles',
+        ],
     ]
 ];
