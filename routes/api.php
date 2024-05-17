@@ -11,11 +11,6 @@ use App\Http\Controllers\PagosController;
 use App\Http\Controllers\PolizasVencimientoController;
 use App\Http\Controllers\UsuarioController;
 
-function getAbilitiesString($key)
-{
-    return collect(config("constants.abilities.$key"))->implode(',');
-}
-
 $abilities = [
     'clientes' => getAbilitiesString('clientes'),
     'aseguradoras' => getAbilitiesString('aseguradoras'),
@@ -30,10 +25,10 @@ Route::get('/', function () {
     return response()->json(['message' => 'Hello World!']);
 })->name('home');
 
-Route::post('/login', [AuthController::class, 'login'])->name('login');
+Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware(['auth:sanctum'])->group(function () use ($abilities) {
-    Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+    Route::post('/logout', [AuthController::class, 'logout']);
 
     Route::resource('aseguradoras', AseguradorasController::class)->middleware(['auth:sanctum', "ability:{$abilities['aseguradoras']}"]);
     Route::resource('clientes', ClienteController::class)->middleware(['auth:sanctum', "ability:{$abilities['clientes']}"]);
