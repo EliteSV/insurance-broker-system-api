@@ -36,4 +36,9 @@ class Poliza extends Model
         $renewalCount = $this->vigencias()->count();
         return round($this->monto * 0.10 * $renewalCount, 2);
     }
+
+    public function getDetallesAttribute($value)
+    {
+        return json_decode($value);
+    }
 }

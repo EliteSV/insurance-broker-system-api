@@ -43,6 +43,9 @@ return [
         'contabilidad' => [
             'index' => 'view-contabilidad',
         ],
+        'reportes' => [
+            'index' => 'view-reportes',
+        ],
         'polizas-vencimiento' => [
             'index' => 'view-polizas-vencimiento',
         ],

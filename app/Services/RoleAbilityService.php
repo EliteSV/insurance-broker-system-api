@@ -13,10 +13,10 @@ class RoleAbilityService
                 return ['*'];
 
             case 'Agente':
-                return $this->getAbilitiesForResources($abilitiesConfig, ['aseguradoras', 'clientes', 'polizas']);
+                return $this->getAbilitiesForResources($abilitiesConfig, ['aseguradoras', 'clientes', 'polizas', 'dashboard', 'pagos']);
 
             case 'Gerente':
-                return $this->getAbilitiesForResources($abilitiesConfig, ['contabilidad', 'dashboard']);
+                return $this->getAbilitiesForResources($abilitiesConfig, ['aseguradoras', 'clientes', 'polizas', 'dashboard', 'pagos', 'contabilidad', 'reportes',]);
 
             default:
                 return [];
