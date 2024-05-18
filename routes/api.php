@@ -6,10 +6,12 @@ use App\Http\Controllers\AseguradorasController;
 use App\Http\Controllers\ClienteController;
 use App\Http\Controllers\ContabilidadController;
 use App\Http\Controllers\DashboardController;
+use App\Http\Controllers\FilesController;
 use App\Http\Controllers\PolizaController;
 use App\Http\Controllers\RenovacionController;
 use App\Http\Controllers\PagosController;
 use App\Http\Controllers\PolizasVencimientoController;
+use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsuarioController;
 
 $abilities = [
@@ -21,6 +23,8 @@ $abilities = [
     'polizas-vencimiento' => getAbilitiesString('polizas-vencimiento'),
     'pagos' => getAbilitiesString('pagos'),
     'contabilidad' => getAbilitiesString('contabilidad'),
+    'archivos' => getAbilitiesString('archivos'),
+    'roles' => getAbilitiesString('roles'),
 ];
 
 Route::get('/', function () {
@@ -41,4 +45,6 @@ Route::middleware(['auth:sanctum'])->group(function () use ($abilities) {
     Route::resource('dashboard', DashboardController::class)->middleware(['auth:sanctum', "ability:{$abilities['dashboard']}"]);
     Route::resource('usuarios', UsuarioController::class)->middleware(['auth:sanctum', "ability:{$abilities['usuarios']}"]);
     Route::resource('contabilidad', ContabilidadController::class)->middleware(['auth:sanctum', "ability:{$abilities['contabilidad']}"]);
+    Route::resource('roles', RolesController::class)->middleware(['auth:sanctum', "ability:{$abilities['roles']}"]);
+    Route::delete('archivos', [FilesController::class, 'destroy'])->middleware(['auth:sanctum', "ability:{$abilities['archivos']}"]);
 });
