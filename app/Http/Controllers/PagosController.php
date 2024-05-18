@@ -99,6 +99,16 @@ class PagosController extends Controller
             $pago->estado = $request->estado;
             $pago->save();
 
+            $remainingEnMora = Pagos::where('vigencia_poliza_id', $pago->vigencia_poliza_id)
+                ->where('estado', 'En Mora')
+                ->count();
+
+            if ($remainingEnMora == 0) {
+                $poliza = $pago->vigencia->poliza_id;
+                $poliza->estado = 'Activa';
+                $poliza->save();
+            }
+
             return response()->json($pago);
         } catch (\Exception $e) {
             Log::error('Failed to update Pago: ' . $e->getMessage());

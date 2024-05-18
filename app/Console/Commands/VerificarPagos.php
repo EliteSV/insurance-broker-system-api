@@ -4,6 +4,7 @@ namespace App\Console\Commands;
 
 use Illuminate\Console\Command;
 use App\Models\Pagos;
+use App\Models\Poliza;
 use Carbon\Carbon;
 
 class VerificarPagos extends Command
@@ -36,8 +37,13 @@ class VerificarPagos extends Command
         foreach ($pagos as $pago) {
             $pago->estado = 'En Mora';
             $pago->save();
+            $polizaIds[] = $pago->vigencia->poliza_id;
         }
 
-        $this->info('Estados de pagos actualizados');
+        $uniquePolizaIds = array_unique($polizaIds);
+
+        Poliza::whereIn('id', $uniquePolizaIds)->update(['estado' => 'En Mora']);
+
+        $this->info('Estados de pagos y polizas actualizados');
     }
 }
