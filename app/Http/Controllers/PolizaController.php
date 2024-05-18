@@ -29,7 +29,7 @@ class PolizaController extends Controller
                 'nombre' => 'required|max:255',
                 'estado' => 'required|max:255',
                 'monto' => 'required|numeric',
-                'cuotas' => 'required|integer',
+                'cuotas' => 'required|integer|in:1,3,6,12',
                 'detalles' => 'required|array',
                 'fecha_inicio' => 'required|max:255',
                 'fecha_vencimiento' => 'required|max:255',
@@ -40,7 +40,7 @@ class PolizaController extends Controller
 
             $poliza = $this->createPoliza($request);
             $vigenciaPoliza = $this->createVigenciaPoliza($poliza, $request);
-            $this->createPagos($vigenciaPoliza, $poliza->monto, $request->fecha_inicio);
+            $this->createPagos($vigenciaPoliza, $poliza->monto, $request->fecha_inicio, $request->cuotas);
 
             $poliza->load(['vigencias.pagos']);
 
@@ -69,7 +69,7 @@ class PolizaController extends Controller
             'nombre' => 'sometimes|required|max:255',
             'estado' => 'sometimes|required|max:255',
             'monto' => 'sometimes|required|numeric',
-            'cuotas' => 'sometimes|required|integer',
+            'cuotas' => 'sometimes|required|integer|in:1,3,6,12',
             'detalles' => 'sometimes|required|array',
             'cliente_id' => 'sometimes|required|exists:clientes,id',
             'aseguradora_id' => 'sometimes|required|exists:aseguradoras,id',
@@ -109,16 +109,27 @@ class PolizaController extends Controller
         ]);
     }
 
-    private function createPagos(VigenciaPolizas $vigenciaPoliza, $monto, $fechaInicio)
+    private function createPagos(VigenciaPolizas $vigenciaPoliza, $monto, $fechaInicio, $cuotas)
     {
-        $cantidad = round($monto / 12, 2);
-        $currentDate = Carbon::parse($fechaInicio);
+        $cantidad = round($monto / $cuotas, 2);
+        $parsedDate = Carbon::parse($fechaInicio);
 
-        for ($i = 1; $i <= 12; $i++) {
+        $intervalMap = [
+            1 => 1,
+            3 => 3,
+            6 => 2,
+            12 => 1
+        ];
+
+        $interval = $intervalMap[$cuotas];
+
+        for ($i = 1; $i <= $cuotas; $i++) {
+            $fechaVencimiento = $parsedDate->copy()->addMonths($interval * $i)->format('Y-m-d');
+
             Pagos::create([
                 'vigencia_poliza_id' => $vigenciaPoliza->id,
                 'cantidad' => $cantidad,
-                'fecha_vencimiento' => $currentDate->addMonth()->format('Y-m-d'),
+                'fecha_vencimiento' => $fechaVencimiento,
                 'fecha_pagado' => null,
                 'comprobante' => null,
                 'estado' => 'Pendiente'
