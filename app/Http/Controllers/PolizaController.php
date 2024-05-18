@@ -70,13 +70,18 @@ class PolizaController extends Controller
             'estado' => 'sometimes|required|max:255',
             'monto' => 'sometimes|required|numeric',
             'cuotas' => 'sometimes|required|integer',
-            'detalles' => 'sometimes|required|json',
+            'detalles' => 'sometimes|required|array',
             'cliente_id' => 'sometimes|required|exists:clientes,id',
             'aseguradora_id' => 'sometimes|required|exists:aseguradoras,id',
             'tipo_poliza_id' => 'sometimes|required|exists:tipo_polizas,id'
         ]);
 
         $poliza = Poliza::findOrFail($id);
+
+        if ($request->has('detalles')) {
+            $request->merge(['detalles' => json_encode($request->detalles)]);
+        }
+
         $poliza->update($request->all());
         return $poliza;
     }
