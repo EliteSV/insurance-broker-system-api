@@ -11,6 +11,7 @@ use App\Http\Controllers\PolizaController;
 use App\Http\Controllers\RenovacionController;
 use App\Http\Controllers\PagosController;
 use App\Http\Controllers\PolizasVencimientoController;
+use App\Http\Controllers\ReportesController;
 use App\Http\Controllers\RolesController;
 use App\Http\Controllers\UsuarioController;
 
@@ -25,6 +26,7 @@ $abilities = [
     'contabilidad' => getAbilitiesString('contabilidad'),
     'archivos' => getAbilitiesString('archivos'),
     'roles' => getAbilitiesString('roles'),
+    'reportes' => getAbilitiesString('reportes'),
 ];
 
 Route::get('/', function () {
@@ -47,4 +49,10 @@ Route::middleware(['auth:sanctum'])->group(function () use ($abilities) {
     Route::resource('contabilidad', ContabilidadController::class)->middleware(['auth:sanctum', "ability:{$abilities['contabilidad']}"]);
     Route::resource('roles', RolesController::class)->middleware(['auth:sanctum', "ability:{$abilities['roles']}"]);
     Route::delete('archivos', [FilesController::class, 'destroy'])->middleware(['auth:sanctum', "ability:{$abilities['archivos']}"]);
+});
+
+Route::middleware(['auth:sanctum', "ability:{$abilities['reportes']}"])->group(function () {
+    Route::get('reportes/clientes-con-mora', [ReportesController::class, 'clientesConMora']);
+    Route::get('reportes/polizas-canceladas', [ReportesController::class, 'polizasCanceladas']);
+    Route::get('reportes/polizas-por-estado', [ReportesController::class, 'polizasPorEstado']);
 });
