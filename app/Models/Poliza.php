@@ -33,6 +33,7 @@ class Poliza extends Model
 
     public function calculateGanancia()
     {
-        return round($this->monto * 0.10, 2);
+        $renewalCount = $this->vigencias()->count();
+        return round($this->monto * 0.10 * $renewalCount, 2);
     }
 }
