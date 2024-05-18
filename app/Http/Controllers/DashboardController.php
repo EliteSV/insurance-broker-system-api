@@ -2,10 +2,9 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pagos;
 use App\Models\Aseguradora;
+use App\Models\Cliente;
 use App\Models\Poliza;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
@@ -14,9 +13,9 @@ class DashboardController extends Controller
     {
         return response()->json([
             'polizasVigentes' => $this->handleDataRetrieval('countPolizasVigentes'),
-            'pagosEnMora' => $this->handleDataRetrieval('countPagosEnMora'),
-            'totalGanancias' => $this->handleDataRetrieval('calculateTotalGanancias'),
-            'aseguradorasRegistradas' => $this->handleDataRetrieval('countAseguradorasRegistradas')
+            'polizasMora' => $this->handleDataRetrieval('countPolizasMora'),
+            'totalClientes' => $this->handleDataRetrieval('countClientes'),
+            'aseguradorasRegistradas' => $this->handleDataRetrieval('countAseguradorasRegistradas'),
         ]);
     }
 
@@ -35,21 +34,15 @@ class DashboardController extends Controller
         return Poliza::where('estado', 'Activa')->count();
     }
 
-    protected function countPagosEnMora()
+    protected function countPolizasMora()
     {
-        return Pagos::where('estado', 'En Mora')->count();
+        return Poliza::where('estado', 'En Mora')->count();
     }
 
-    protected function calculateTotalGanancias()
+    protected function countClientes()
     {
-        $totalGanancia = 0;
-        $polizas = Poliza::all();
 
-        foreach ($polizas as $poliza) {
-            $totalGanancia += $poliza->calculateGanancia();
-        }
-
-        return round($totalGanancia, 2);
+        return Cliente::count();
     }
 
     protected function countAseguradorasRegistradas()
