@@ -16,7 +16,7 @@ class RoleAbilityService
                 return $this->getAbilitiesForResources($abilitiesConfig, ['aseguradoras', 'clientes', 'polizas']);
 
             case 'Gerente':
-                return $this->getAbilitiesForResources($abilitiesConfig, ['usuarios']);
+                return $this->getAbilitiesForResources($abilitiesConfig, ['contabilidad', 'dashboard']);
 
             default:
                 return [];

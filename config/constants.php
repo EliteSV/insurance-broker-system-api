@@ -40,6 +40,9 @@ return [
         'dashboard' => [
             'index' => 'view-dashboard',
         ],
+        'contabilidad' => [
+            'index' => 'view-contabilidad',
+        ],
         'polizas-vencimiento' => [
             'index' => 'view-polizas-vencimiento',
         ],
