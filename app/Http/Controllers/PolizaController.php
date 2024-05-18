@@ -21,7 +21,7 @@ class PolizaController extends Controller
      */
     public function index()
     {
-        return Poliza::with(['cliente', 'aseguradora', 'tipoPoliza', 'vigencias'])->get();
+        return Poliza::with(['cliente', 'aseguradora', 'tipoPoliza', 'vigencias', 'vigencias.pagos'])->get();
     }
 
     /**
