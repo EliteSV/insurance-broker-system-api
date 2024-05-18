@@ -43,5 +43,11 @@ return [
         'polizas-vencimiento' => [
             'index' => 'view-polizas-vencimiento',
         ],
+        'archivos' => [
+            'destroy' => 'delete-archivos',
+        ],
+        'roles' => [
+            'index' => 'view-roles',
+        ],
     ]
 ];
