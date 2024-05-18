@@ -30,4 +30,10 @@ class Poliza extends Model
     {
         return $this->hasMany(VigenciaPolizas::class, 'poliza_id');
     }
+
+    public function calculateGanancia()
+    {
+        $renewalCount = $this->vigencias()->count();
+        return round($this->monto * 0.10 * $renewalCount, 2);
+    }
 }
