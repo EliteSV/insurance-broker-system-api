@@ -22,12 +22,14 @@ class PolizaService
         [$interval, $iterations] = $intervalLoopMap[$cuotas];
 
         $cantidad = round($monto / ($iterations + 1), 2);
+        $cuotaNo = 1;
 
         Pagos::create([
             'vigencia_poliza_id' => $vigenciaPoliza->id,
             'cantidad' => $cantidad,
             'fecha_vencimiento' => $parsedDate->format('Y-m-d'),
             'fecha_pagado' => null,
+            'cuota' => $cuotaNo,
             'comprobante' => null,
             'estado' => 'Pendiente'
         ]);
@@ -38,6 +40,7 @@ class PolizaService
             Pagos::create([
                 'vigencia_poliza_id' => $vigenciaPoliza->id,
                 'cantidad' => $cantidad,
+                'cuota' => $cuotaNo + $i,
                 'fecha_vencimiento' => $fechaVencimiento,
                 'fecha_pagado' => null,
                 'comprobante' => null,

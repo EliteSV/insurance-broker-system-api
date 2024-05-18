@@ -21,7 +21,7 @@ class PolizaController extends Controller
      */
     public function index()
     {
-        return Poliza::with(['cliente', 'aseguradora', 'tipoPoliza', 'vigencias'])->get();
+        return Poliza::with(['cliente', 'aseguradora', 'tipoPoliza', 'vigencias', 'vigencias.pagos'])->get();
     }
 
     /**
@@ -61,7 +61,7 @@ class PolizaController extends Controller
      */
     public function show(string $id)
     {
-        $poliza = Poliza::with(['cliente', 'aseguradora', 'tipoPoliza', 'vigencias'])->findOrFail($id);
+        $poliza = Poliza::with(['cliente', 'aseguradora', 'tipoPoliza', 'vigencias', 'vigencias.pagos'])->findOrFail($id);
         return $poliza;
     }
 

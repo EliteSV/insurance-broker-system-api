@@ -9,7 +9,7 @@ class Pagos extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['vigencia_poliza_id', 'cantidad', 'fecha_vencimiento', 'fecha_pagado', 'comprobante', 'estado'];
+    protected $fillable = ['vigencia_poliza_id', 'cantidad', 'fecha_vencimiento', 'fecha_pagado', 'comprobante', 'estado', 'cuota'];
 
     public function vigencia()
     {
