@@ -2,30 +2,24 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Pagos;
-use App\Models\Cliente;
 use App\Models\Aseguradora;
+use App\Models\Cliente;
 use App\Models\Poliza;
-use Carbon\Carbon;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
 class DashboardController extends Controller
 {
-    public function index(Request $request)
+    public function index()
     {
-
-        $pageSize = $request->input('pageSize', 10);
-
         return response()->json([
-            'pagosVencidos' => $this->handleDataRetrieval('getPagosVencidos', [$pageSize]),
-            'clientes' => $this->handleDataRetrieval('getEntityData', [Cliente::class, $pageSize]),
-            'aseguradoras' => $this->handleDataRetrieval('getEntityData', [Aseguradora::class, $pageSize]),
-            'polizas' => $this->handleDataRetrieval('getPolizasWithRelations', [$pageSize]),
+            'polizasVigentes' => $this->handleDataRetrieval('countPolizasVigentes'),
+            'polizasMora' => $this->handleDataRetrieval('countPolizasMora'),
+            'totalClientes' => $this->handleDataRetrieval('countClientes'),
+            'aseguradorasRegistradas' => $this->handleDataRetrieval('countAseguradorasRegistradas'),
         ]);
     }
 
-    protected function handleDataRetrieval($methodName, $parameters)
+    protected function handleDataRetrieval($methodName, $parameters = [])
     {
         try {
             return call_user_func_array([$this, $methodName], $parameters);
@@ -35,33 +29,24 @@ class DashboardController extends Controller
         }
     }
 
-    protected function getPagosVencidos($pageSize)
+    protected function countPolizasVigentes()
     {
-        return Pagos::where('fecha_vencimiento', '<', Carbon::today('GMT')->toDateString())
-            ->paginate($pageSize)
-            ->transform(function ($pago) {
-                $fechaVencimiento = Carbon::parse($pago->fecha_vencimiento, 'GMT')->startOfDay();
-                $today = Carbon::now('GMT')->startOfDay();
-                $pago->diasRetraso = abs($fechaVencimiento->diffInDays($today, false));
-                return $pago;
-            });
+        return Poliza::where('estado', 'Activa')->count();
     }
 
-    protected function getEntityData($model, $pageSize)
+    protected function countPolizasMora()
     {
-        $data = $model::paginate($pageSize);
-        return [
-            'totalRecords' => $data->total(),
-            'data' => $data
-        ];
+        return Poliza::where('estado', 'En Mora')->count();
     }
 
-    protected function getPolizasWithRelations($pageSize)
+    protected function countClientes()
     {
-        $polizas = Poliza::with('cliente', 'aseguradora', 'tipoPoliza', 'vigencias')->paginate($pageSize);
-        return [
-            'totalRecords' => $polizas->total(),
-            'data' => $polizas
-        ];
+
+        return Cliente::count();
+    }
+
+    protected function countAseguradorasRegistradas()
+    {
+        return Aseguradora::count();
     }
 }
