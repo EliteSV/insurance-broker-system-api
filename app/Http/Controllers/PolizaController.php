@@ -111,19 +111,29 @@ class PolizaController extends Controller
 
     private function createPagos(VigenciaPolizas $vigenciaPoliza, $monto, $fechaInicio, $cuotas)
     {
-        $cantidad = round($monto / $cuotas, 2);
         $parsedDate = Carbon::parse($fechaInicio);
 
-        $intervalMap = [
-            1 => 1,
-            3 => 3,
-            6 => 2,
-            12 => 1
+        $intervalLoopMap = [
+            1 => [12, 0],
+            3 => [3, 2],
+            6 => [6, 1],
+            12 => [1, 11]
         ];
 
-        $interval = $intervalMap[$cuotas];
+        [$interval, $iterations] = $intervalLoopMap[$cuotas];
 
-        for ($i = 1; $i <= $cuotas; $i++) {
+        $cantidad = round($monto / ($iterations + 1), 2);
+
+        Pagos::create([
+            'vigencia_poliza_id' => $vigenciaPoliza->id,
+            'cantidad' => $cantidad,
+            'fecha_vencimiento' => $parsedDate->format('Y-m-d'),
+            'fecha_pagado' => null,
+            'comprobante' => null,
+            'estado' => 'Pendiente'
+        ]);
+
+        for ($i = 1; $i <= $iterations; $i++) {
             $fechaVencimiento = $parsedDate->copy()->addMonths($interval * $i)->format('Y-m-d');
 
             Pagos::create([
