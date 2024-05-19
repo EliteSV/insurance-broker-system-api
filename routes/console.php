@@ -8,4 +8,4 @@ Artisan::command('inspire', function () {
     $this->comment(Inspiring::quote());
 })->purpose('Display an inspiring quote')->hourly();
 
-Schedule::command('pagos:verificar-pagos')->daily();
+Schedule::command('pagos:verificar-pagos')->hourly();

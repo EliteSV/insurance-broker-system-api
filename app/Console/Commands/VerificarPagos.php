@@ -31,18 +31,18 @@ class VerificarPagos extends Command
         $today = Carbon::now()->format('Y-m-d');
 
         $pagos = Pagos::where('fecha_vencimiento', '<', $today)
-            ->where('estado', '!=', 'En Mora')
+            ->where('estado', '!=', 'Vencido')
             ->get();
 
         foreach ($pagos as $pago) {
-            $pago->estado = 'En Mora';
+            $pago->estado = 'Vencido';
             $pago->save();
             $polizaIds[] = $pago->vigencia->poliza_id;
         }
 
         $uniquePolizaIds = array_unique($polizaIds);
 
-        Poliza::whereIn('id', $uniquePolizaIds)->update(['estado' => 'En Mora']);
+        Poliza::whereIn('id', $uniquePolizaIds)->update(['estado' => 'Vencido']);
 
         $this->info('Estados de pagos y polizas actualizados');
     }

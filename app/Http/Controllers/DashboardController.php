@@ -35,12 +35,12 @@ class DashboardController extends Controller
 
     protected function countPolizasVigentes()
     {
-        return Poliza::where('estado', 'Activa')->count();
+        return Poliza::where('estado', 'Vigente')->count();
     }
 
     protected function countPolizasMora()
     {
-        return Poliza::where('estado', 'En Mora')->count();
+        return Poliza::where('estado', 'Vencida')->count();
     }
 
     protected function countClientes()
@@ -69,14 +69,14 @@ class DashboardController extends Controller
     protected function countClientesEnMora()
     {
         return Cliente::whereHas('polizas', function ($query) {
-            $query->where('estado', 'En Mora');
+            $query->where('estado', 'Vencida');
         })->count();
     }
 
     protected function countClientesAlDia()
     {
         return Cliente::whereHas('polizas', function ($query) {
-            $query->where('estado', 'Activa');
+            $query->where('estado', 'Vigente');
         })->count();
     }
 }
