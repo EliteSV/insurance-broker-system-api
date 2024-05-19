@@ -11,14 +11,19 @@ class PolizasVencimientoController extends Controller
     public function index(Request $request)
     {
         $validatedData = $request->validate([
-            'date' => 'required|date',
+            'weeks' => 'required|integer|min:1|max:4',
         ]);
 
-        $referenceDate = Carbon::parse($validatedData['date'], 'GMT');
-        $formattedReferenceDate = $referenceDate->toDateString();
+        $weeks = (int)$validatedData['weeks'];
 
-        $vigencias = VigenciaPolizas::with('poliza')
-            ->where('fecha_vencimiento', '>', $formattedReferenceDate)
+        $currentDate = Carbon::now('GMT');
+        $endDate = $currentDate->copy()->addWeeks($weeks);
+
+        $formattedCurrentDate = $currentDate->toDateString();
+        $formattedEndDate = $endDate->toDateString();
+
+        $vigencias = VigenciaPolizas::with('poliza', 'poliza.aseguradora')
+            ->whereBetween('fecha_vencimiento', [$formattedCurrentDate, $formattedEndDate])
             ->get();
 
         return response()->json($vigencias);
