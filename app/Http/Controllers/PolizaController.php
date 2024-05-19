@@ -33,7 +33,7 @@ class PolizaController extends Controller
             $request->validate([
                 'nombre' => 'required|max:255',
                 'estado' => 'required|max:255',
-                'codigo_poliza' => 'required|max:255',
+                'codigo' => 'required|max:255',
                 'monto' => 'required|numeric',
                 'cuotas' => 'required|integer|in:1,2,4,12',
                 'detalles' => 'required|array',
@@ -74,7 +74,7 @@ class PolizaController extends Controller
         $request->validate([
             'nombre' => 'sometimes|required|max:255',
             'estado' => 'sometimes|required|max:255',
-            'codigo_poliza' => 'sometimes|required|max:255',
+            'codigo' => 'sometimes|required|max:255',
             'monto' => 'sometimes|required|numeric',
             'cuotas' => 'sometimes|required|integer|in:1,2,4,12',
             'detalles' => 'sometimes|required|array',
