@@ -85,9 +85,10 @@ class PagosController extends Controller
             $pago = Pagos::findOrFail($id);
 
             $request->validate([
-                'fecha_pagado' => 'required|max:255',
+                'fecha_pagado' => 'nullable|max:255',
                 'comprobante' => 'nullable|file',
                 'estado' => 'required|max:255',
+                'cuota' => 'sometimes|required|numeric',
             ]);
 
             if ($request->hasFile('comprobante')) {
@@ -99,6 +100,7 @@ class PagosController extends Controller
 
             $pago->fecha_pagado = $request->fecha_pagado;
             $pago->estado = $request->estado;
+            $pago->cuota = $request->cuota;
             $pago->save();
 
             $remainingEnMora = Pagos::where('vigencia_poliza_id', $pago->vigencia_poliza_id)
@@ -106,7 +108,7 @@ class PagosController extends Controller
                 ->count();
 
             if ($remainingEnMora == 0) {
-                $poliza = $pago->vigencia->poliza_id;
+                $poliza = $pago->vigencia->poliza;
                 $poliza->estado = 'Vigente';
                 $poliza->save();
             }
