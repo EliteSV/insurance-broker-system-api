@@ -83,7 +83,7 @@ class PagosController extends Controller
             $pago = Pagos::findOrFail($id);
 
             $request->validate([
-                'fecha_pagado' => 'required|max:255',
+                'fecha_pagado' => 'nullable|max:255',
                 'comprobante' => 'nullable|file',
                 'estado' => 'required|max:255',
             ]);
@@ -104,7 +104,7 @@ class PagosController extends Controller
                 ->count();
 
             if ($remainingEnMora == 0) {
-                $poliza = $pago->vigencia->poliza_id;
+                $poliza = $pago->vigencia->poliza;
                 $poliza->estado = 'Activa';
                 $poliza->save();
             }
