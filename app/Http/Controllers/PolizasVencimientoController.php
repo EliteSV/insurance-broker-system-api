@@ -17,7 +17,7 @@ class PolizasVencimientoController extends Controller
         $referenceDate = Carbon::parse($validatedData['date'], 'GMT');
         $formattedReferenceDate = $referenceDate->toDateString();
 
-        $vigencias = VigenciaPolizas::with('poliza')
+        $vigencias = VigenciaPolizas::with('poliza', 'poliza.aseguradora')
             ->where('fecha_vencimiento', '>', $formattedReferenceDate)
             ->get();
 
