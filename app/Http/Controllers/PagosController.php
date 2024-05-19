@@ -21,7 +21,7 @@ class PagosController extends Controller
      */
     public function index()
     {
-        return Pagos::with("vigencia.poliza", "vigencia.poliza.cliente",  "vigencia.poliza.aseguradora",  "vigencia.poliza.tipoPoliza",  "vigencia.poliza.vigencias")->get();
+        return Pagos::with("vigencia.poliza", "vigencia.poliza.cliente", "vigencia.poliza.aseguradora", "vigencia.poliza.tipoPoliza", "vigencia.poliza.vigencias")->get();
     }
 
     /**
@@ -73,7 +73,7 @@ class PagosController extends Controller
      */
     public function show(string $id)
     {
-        return Pagos::with("vigencia.poliza", "vigencia.poliza.cliente",  "vigencia.poliza.aseguradora",  "vigencia.poliza.tipoPoliza",  "vigencia.poliza.vigencias")->findOrFail($id);
+        return Pagos::with("vigencia.poliza", "vigencia.poliza.cliente", "vigencia.poliza.aseguradora", "vigencia.poliza.tipoPoliza", "vigencia.poliza.vigencias")->findOrFail($id);
     }
 
     /**
@@ -125,6 +125,6 @@ class PagosController extends Controller
      */
     public function destroy(string $id)
     {
-        Pagos::destroy($id);
+        return Pagos::destroy($id);
     }
 }

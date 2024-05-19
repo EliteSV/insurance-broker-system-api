@@ -1,6 +1,7 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
+use Illuminate\Http\Request;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\AseguradorasController;
 use App\Http\Controllers\ClienteController;
@@ -36,6 +37,10 @@ Route::get('/', function () {
 Route::post('/login', [AuthController::class, 'login']);
 Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail']);
 Route::post('reset-password', [AuthController::class, 'resetPassword']);
+
+Route::get('/user', function (Request $request) {
+    return $request->user();
+})->middleware('auth:sanctum');
 
 Route::middleware(['auth:sanctum'])->group(function () use ($abilities) {
     Route::post('/logout', [AuthController::class, 'logout']);
