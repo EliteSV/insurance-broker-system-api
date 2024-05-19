@@ -15,4 +15,9 @@ class Cliente extends Model
     {
         return $this->hasMany(DocumentosClientes::class, 'cliente_id');
     }
+
+    public function polizas()
+    {
+        return $this->hasMany(Poliza::class, 'cliente_id');
+    }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Models\Aseguradora;
 use App\Models\Cliente;
+use App\Models\TipoPoliza;
 use App\Models\Poliza;
 use Illuminate\Support\Facades\Log;
 
@@ -16,6 +17,9 @@ class DashboardController extends Controller
             'polizasMora' => $this->handleDataRetrieval('countPolizasMora'),
             'totalClientes' => $this->handleDataRetrieval('countClientes'),
             'aseguradorasRegistradas' => $this->handleDataRetrieval('countAseguradorasRegistradas'),
+            'tiposDePolizas' => $this->handleDataRetrieval('countTiposDePoliza'),
+            'clientesMora' => $this->handleDataRetrieval('countClientesEnMora'),
+            'clientesAlDia' => $this->handleDataRetrieval('countClientesAlDia'),
         ]);
     }
 
@@ -48,5 +52,31 @@ class DashboardController extends Controller
     protected function countAseguradorasRegistradas()
     {
         return Aseguradora::count();
+    }
+
+    protected function countTiposDePoliza()
+    {
+        $tiposDePoliza = TipoPoliza::all();
+        $result = [];
+
+        foreach ($tiposDePoliza as $tipoPoliza) {
+            $result[$tipoPoliza->nombre] = Poliza::where('tipo_poliza_id', $tipoPoliza->id)->count();
+        }
+
+        return $result;
+    }
+
+    protected function countClientesEnMora()
+    {
+        return Cliente::whereHas('polizas', function ($query) {
+            $query->where('estado', 'En Mora');
+        })->count();
+    }
+
+    protected function countClientesAlDia()
+    {
+        return Cliente::whereHas('polizas', function ($query) {
+            $query->where('estado', 'Activa');
+        })->count();
     }
 }
