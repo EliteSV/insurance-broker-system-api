@@ -13,7 +13,7 @@ class ReportesController extends Controller
      */
     public function clientesConMora()
     {
-        $pagosEnMora = Pagos::where('estado', 'En Mora')->with('vigencia.poliza.cliente')->get();
+        $pagosEnMora = Pagos::where('estado', 'Vencido')->with('vigencia.poliza.cliente')->get();
 
         $clientesConMora = $pagosEnMora->map(function ($pago) {
             return $pago->vigencia->poliza->cliente;
@@ -37,12 +37,16 @@ class ReportesController extends Controller
      */
     public function polizasPorEstado()
     {
-        $polizasPendiente = Poliza::where('estado', 'Cancelada')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
-        $polizasPagado = Poliza::where('estado', 'Activa')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
+        $polizasPendiente = Poliza::where('estado', 'Pendiente')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
+        $polizasVigentes = Poliza::where('estado', 'Vigente')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
+        $polizasExpiradas = Poliza::where('estado', 'Expirada')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
+        $polizasCanceladas = Poliza::where('estado', 'Cancelada')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
 
         $result = [
-            'canceladas' => $polizasPendiente,
-            'activas' => $polizasPagado,
+            'pendientes' => $polizasPendiente,
+            'vigentes' => $polizasVigentes,
+            'expiradas' => $polizasExpiradas,
+            'canceladas' => $polizasCanceladas,
         ];
 
         return response()->json($result);

@@ -9,7 +9,7 @@ class Poliza extends Model
 {
     use HasFactory;
 
-    protected $fillable = ['nombre', 'estado', 'monto', 'cuotas', 'detalles', 'cliente_id', 'aseguradora_id', 'tipo_poliza_id'];
+    protected $fillable = ['nombre', 'estado', 'monto', 'codigo', 'cuotas', 'detalles', 'cliente_id', 'aseguradora_id', 'tipo_poliza_id'];
 
     public function cliente()
     {

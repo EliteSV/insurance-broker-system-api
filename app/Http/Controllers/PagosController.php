@@ -103,12 +103,12 @@ class PagosController extends Controller
             $pago->save();
 
             $remainingEnMora = Pagos::where('vigencia_poliza_id', $pago->vigencia_poliza_id)
-                ->where('estado', 'En Mora')
+                ->where('estado', 'Vencido')
                 ->count();
 
             if ($remainingEnMora == 0) {
                 $poliza = $pago->vigencia->poliza;
-                $poliza->estado = 'Activa';
+                $poliza->estado = 'Vigente';
                 $poliza->save();
             }
 
