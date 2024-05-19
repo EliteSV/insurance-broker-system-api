@@ -53,6 +53,7 @@ class PagosController extends Controller
             $pago = new Pagos([
                 'vigencia_poliza_id' => $request->vigencia_poliza_id,
                 'cantidad' => $request->cantidad,
+                'cuota' => $request->cuota,
                 'fecha_vencimiento' => $request->fecha_vencimiento,
                 'fecha_pagado' => $request->fecha_pagado,
                 'comprobante' => $url,
