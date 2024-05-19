@@ -34,6 +34,8 @@ Route::get('/', function () {
 })->name('home');
 
 Route::post('/login', [AuthController::class, 'login']);
+Route::post('/forgot-password', [AuthController::class, 'sendResetLinkEmail']);
+Route::post('reset-password', [AuthController::class, 'resetPassword']);
 
 Route::middleware(['auth:sanctum'])->group(function () use ($abilities) {
     Route::post('/logout', [AuthController::class, 'logout']);
