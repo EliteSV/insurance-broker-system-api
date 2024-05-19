@@ -33,6 +33,7 @@ class PagosController extends Controller
             $request->validate([
                 'vigencia_poliza_id' => 'required|exists:vigencia_polizas,id',
                 'cantidad' => 'required|numeric',
+                'cuota' => 'required|numeric',
                 'fecha_vencimiento' => 'required|max:255',
                 'fecha_pagado' => 'nullable|max:255',
                 'comprobante' => 'nullable|file',
@@ -52,6 +53,7 @@ class PagosController extends Controller
             $pago = new Pagos([
                 'vigencia_poliza_id' => $request->vigencia_poliza_id,
                 'cantidad' => $request->cantidad,
+                'cuota' => $request->cuota,
                 'fecha_vencimiento' => $request->fecha_vencimiento,
                 'fecha_pagado' => $request->fecha_pagado,
                 'comprobante' => $url,
