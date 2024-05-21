@@ -34,6 +34,8 @@ class RenovacionController extends Controller
 
             $poliza = Poliza::find($vigenciaData['poliza_id']);
             $this->polizaService->createPagos($vigenciaPoliza, $poliza->monto, $request->fecha_inicio, $poliza->cuotas);
+            $poliza->estado = 'Vigente';
+            $poliza->save();
 
             $vigenciaPoliza->load(['pagos']);
 
