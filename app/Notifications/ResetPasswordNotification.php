@@ -47,7 +47,7 @@ class ResetPasswordNotification extends Notification
      */
     public function toMail($notifiable)
     {
-        $url = url('/reset-password/' . $this->token);
+        $url = url(env('FRONTEND_URL') . '/reset-password/' . $this->token);
 
         return (new MailMessage)
             ->subject('Reinicia tu contraseña')
