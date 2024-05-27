@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Pagos;
 use App\Models\Poliza;
 
@@ -28,7 +27,7 @@ class ReportesController extends Controller
 
         $clientesConMora = $pagosEnMora->map(function ($pago) {
             return $pago->vigencia->poliza->cliente;
-        })->unique('id');
+        })->unique('id')->values();
 
         return response()->json($clientesConMora);
     }
