@@ -55,5 +55,18 @@ return [
         'roles' => [
             'index' => 'view-roles',
         ],
+    ],
+    'estadosComunes' => [
+        'Pendiente' => 'Pendiente',
+    ],
+    'polizaEstados' => [
+        'Vigente' => 'Vigente',
+        'Vencida' => 'Vencida',
+        'Expirada' => 'Expirada',
+        'Cancelada' => 'Cancelada',
+    ],
+    'pagoEstados' => [
+        'Vencido' => 'Vencido',
+        'Pagado' => 'Pagado',
     ]
 ];

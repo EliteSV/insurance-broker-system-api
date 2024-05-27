@@ -23,6 +23,7 @@ class PolizaService
 
         $cantidad = round($monto / ($iterations + 1), 2);
         $cuotaNo = 1;
+        $estadoPendiente = config('constants.estadosComunes.Pendiente');
 
         Pagos::create([
             'vigencia_poliza_id' => $vigenciaPoliza->id,
@@ -31,7 +32,7 @@ class PolizaService
             'fecha_pagado' => null,
             'cuota' => $cuotaNo,
             'comprobante' => null,
-            'estado' => 'Pendiente'
+            'estado' => $estadoPendiente
         ]);
 
         for ($i = 1; $i <= $iterations; $i++) {
@@ -44,7 +45,7 @@ class PolizaService
                 'fecha_vencimiento' => $fechaVencimiento,
                 'fecha_pagado' => null,
                 'comprobante' => null,
-                'estado' => 'Pendiente'
+                'estado' => $estadoPendiente
             ]);
         }
     }
