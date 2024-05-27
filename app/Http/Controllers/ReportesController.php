@@ -2,22 +2,32 @@
 
 namespace App\Http\Controllers;
 
-use Illuminate\Http\Request;
 use App\Models\Pagos;
 use App\Models\Poliza;
 
 class ReportesController extends Controller
 {
+    private $polizaEstados;
+    private $pagoEstados;
+
+    public function __construct()
+    {
+        $this->polizaEstados = config('constants.polizaEstados');
+        $this->pagoEstados = config('constants.pagoEstados');
+    }
+
     /**
      * Get Clientes with Mora
      */
     public function clientesConMora()
     {
-        $pagosEnMora = Pagos::where('estado', 'Vencido')->with('vigencia.poliza.cliente')->get();
+        $estadoVencido = $this->pagoEstados['Vencido'];
+
+        $pagosEnMora = Pagos::where('estado', $estadoVencido)->with('vigencia.poliza.cliente')->get();
 
         $clientesConMora = $pagosEnMora->map(function ($pago) {
             return $pago->vigencia->poliza->cliente;
-        })->unique('id');
+        })->unique('id')->values();
 
         return response()->json($clientesConMora);
     }
@@ -27,7 +37,9 @@ class ReportesController extends Controller
      */
     public function polizasCanceladas()
     {
-        $polizasCanceladas = Poliza::where('estado', 'Cancelada')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
+        $estadoCancelada = $this->polizaEstados['Cancelada'];
+
+        $polizasCanceladas = Poliza::where('estado', $estadoCancelada)->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
 
         return response()->json($polizasCanceladas);
     }
@@ -37,17 +49,15 @@ class ReportesController extends Controller
      */
     public function polizasPorEstado()
     {
-        $polizasPendiente = Poliza::where('estado', 'Pendiente')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
-        $polizasVigentes = Poliza::where('estado', 'Vigente')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
-        $polizasExpiradas = Poliza::where('estado', 'Expirada')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
-        $polizasCanceladas = Poliza::where('estado', 'Cancelada')->with(['cliente', 'aseguradora', 'tipoPoliza'])->get();
+        $result = [];
 
-        $result = [
-            'pendientes' => $polizasPendiente,
-            'vigentes' => $polizasVigentes,
-            'expiradas' => $polizasExpiradas,
-            'canceladas' => $polizasCanceladas,
-        ];
+        foreach ($this->polizaEstados as $estado) {
+            $key = strtolower($estado) . 's';
+            $polizas = Poliza::where('estado', $estado)
+                ->with(['cliente', 'aseguradora', 'tipoPoliza'])
+                ->get();
+            $result[$key] = $polizas;
+        }
 
         return response()->json($result);
     }

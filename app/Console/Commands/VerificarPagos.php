@@ -6,6 +6,7 @@ use Illuminate\Console\Command;
 use App\Models\Pagos;
 use App\Models\Poliza;
 use Carbon\Carbon;
+use App\Notifications\PolizaVencidaNotification;
 
 class VerificarPagos extends Command
 {
@@ -29,20 +30,33 @@ class VerificarPagos extends Command
     public function handle()
     {
         $today = Carbon::now()->format('Y-m-d');
+        $pagoVencido = config('constants.pagoEstados.Vencido');
+        $polizaVencida = config('constants.polizaEstados.Vencida');
 
         $pagos = Pagos::where('fecha_vencimiento', '<', $today)
-            ->where('estado', '!=', 'Vencido')
+            ->where('estado', '!=', $pagoVencido)
             ->get();
 
+        $notifiedPolizas = [];
+
         foreach ($pagos as $pago) {
-            $pago->estado = 'Vencido';
+            $pago->estado = $pagoVencido;
             $pago->save();
-            $polizaIds[] = $pago->vigencia->poliza_id;
+            $polizaId = $pago->vigencia->poliza_id;
+
+            if (!in_array($polizaId, $notifiedPolizas)) {
+                $notifiedPolizas[] = $polizaId;
+
+                $cliente = $pago->vigencia->poliza->cliente;
+                $poliza = $pago->vigencia->poliza;
+
+                if ($cliente && $poliza) {
+                    $cliente->notify(new PolizaVencidaNotification($poliza));
+                }
+            }
         }
 
-        $uniquePolizaIds = array_unique($polizaIds);
-
-        Poliza::whereIn('id', $uniquePolizaIds)->update(['estado' => 'Vencido']);
+        Poliza::whereIn('id', $notifiedPolizas)->update(['estado' => $polizaVencida]);
 
         $this->info('Estados de pagos y polizas actualizados');
     }
