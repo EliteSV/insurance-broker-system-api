@@ -4,7 +4,7 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Poliza;
-use App\Models\VigenciaPoliza;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Log;
 use App\Services\PolizaService;
 use Carbon\Carbon;
@@ -85,8 +85,29 @@ class PolizaController extends Controller
      */
     public function destroy(string $id)
     {
-        return Poliza::destroy($id);
+        try {
+            DB::beginTransaction();
+
+            $poliza = Poliza::findOrFail($id);
+
+            foreach ($poliza->vigencias as $vigencia) {
+                $vigencia->pagos()->delete();
+            }
+
+            $poliza->vigencias()->delete();
+
+            $poliza->delete();
+
+            DB::commit();
+
+            return response()->json(['message' => 'Poliza and related records deleted successfully'], 200);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            Log::error('Failed to delete poliza: ' . $e->getMessage());
+            return response()->json(['error' => 'Failed to delete poliza'], 500);
+        }
     }
+
 
     private function validatePoliza(Request $request, $polizaId = null)
     {
