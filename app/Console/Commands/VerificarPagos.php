@@ -43,18 +43,18 @@ class VerificarPagos extends Command
             $pago->estado = $pagoVencido;
             $pago->save();
 
-            // ToDO: Fix issue where email fails due to email not being in sandbox
-            // $polizaId = $pago->vigencia->poliza_id;
-            // if (!in_array($polizaId, $notifiedPolizas)) {
-            //     $notifiedPolizas[] = $polizaId;
+            $polizaId = $pago->vigencia->poliza_id;
+            if (!in_array($polizaId, $notifiedPolizas)) {
+                $notifiedPolizas[] = $polizaId;
 
-            //     $cliente = $pago->vigencia->poliza->cliente;
-            //     $poliza = $pago->vigencia->poliza;
+                // ToDO: Fix issue where email fails due to email not being in sandbox
+                // $cliente = $pago->vigencia->poliza->cliente;
+                // $poliza = $pago->vigencia->poliza;
 
-            //     if ($cliente && $poliza) {
-            //         $cliente->notify(new PolizaVencidaNotification($poliza));
-            //     }
-            // }
+                // if ($cliente && $poliza) {
+                //     $cliente->notify(new PolizaVencidaNotification($poliza));
+                // }
+            }
         }
 
         Poliza::whereIn('id', $notifiedPolizas)->update(['estado' => $polizaVencida]);
