@@ -11,7 +11,7 @@ class UsuarioController extends Controller
 {
     public function index()
     {
-        $usuarios = Usuario::with('rol')->get();
+        $usuarios = Usuario::with('rol')->orderBy('created_at', 'desc')->get();
         return response()->json($usuarios);
     }
 

@@ -21,7 +21,7 @@ class PagosController extends Controller
      */
     public function index()
     {
-        return Pagos::with("vigencia.poliza", "vigencia.poliza.cliente", "vigencia.poliza.aseguradora", "vigencia.poliza.tipoPoliza", "vigencia.poliza.vigencias")->get();
+        return Pagos::with("vigencia.poliza", "vigencia.poliza.cliente", "vigencia.poliza.aseguradora", "vigencia.poliza.tipoPoliza", "vigencia.poliza.vigencias")->orderBy('created_at', 'desc')->get();
     }
 
     /**

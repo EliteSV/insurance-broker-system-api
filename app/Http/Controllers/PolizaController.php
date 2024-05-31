@@ -23,7 +23,7 @@ class PolizaController extends Controller
      */
     public function index()
     {
-        return Poliza::with(['cliente', 'aseguradora', 'tipoPoliza', 'vigencias', 'vigencias.pagos'])->get();
+        return Poliza::with(['cliente', 'aseguradora', 'tipoPoliza', 'vigencias', 'vigencias.pagos'])->orderBy('created_at', 'desc')->get();
     }
 
     /**

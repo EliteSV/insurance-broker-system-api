@@ -12,7 +12,7 @@ class AseguradorasController extends Controller
      */
     public function index()
     {
-        return Aseguradora::all();
+        return Aseguradora::orderBy('nombre', 'asc')->get();
     }
 
     /**
