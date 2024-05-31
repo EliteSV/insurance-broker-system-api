@@ -76,8 +76,8 @@ class ClienteController extends Controller
             info($request->all());
             $request->validate([
                 'nombre' => 'required|max:255',
-                'dui' => 'required|max:255',
-                'nit' => 'required|max:255',
+                'dui' => 'required|max:255|unique:clientes,dui,' . $id,
+                'nit' => 'required|max:255|unique:clientes,nit,' . $id,
                 'email' => 'required|email|max:255',
                 'telefono' => 'required|max:255',
                 'direccion' => 'required|max:255',
