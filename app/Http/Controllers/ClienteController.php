@@ -21,7 +21,7 @@ class ClienteController extends Controller
      */
     public function index()
     {
-        return Cliente::with("documentos")->get();
+        return Cliente::with("documentos")->orderBy('created_at', 'desc')->get();
     }
 
     /**

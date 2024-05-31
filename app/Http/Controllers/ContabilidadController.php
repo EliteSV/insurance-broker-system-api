@@ -12,16 +12,10 @@ class ContabilidadController extends Controller
      */
     public function index(Request $request)
     {
-        $request->validate([
-            'pageSize' => 'integer|min:1'
-        ]);
-
-        $pageSize = $request->input('pageSize', 50);
-
-        $polizas = Poliza::paginate($pageSize);
+        $polizas = Poliza::orderBy('created_at', 'desc')->get();
 
         $totalGanancia = 0;
-        $polizas->getCollection()->transform(function ($poliza) use (&$totalGanancia) {
+        $polizas->transform(function ($poliza) use (&$totalGanancia) {
             $ganancia = $poliza->calculateGanancia();
             $poliza->ganancia = $ganancia;
             $totalGanancia += $ganancia;
